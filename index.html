@@ -24,6 +24,43 @@ body{
     100%{background-position:0% 50%;}
 }
 
+/* Carta animada */
+.overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:10;
+}
+
+.carta{
+    background:white;
+    color:#c9184a;
+    padding:40px;
+    border-radius:20px;
+    max-width:400px;
+    animation: abrir 1s ease forwards;
+    transform:scale(0);
+}
+
+@keyframes abrir{
+    to{ transform:scale(1); }
+}
+
+.carta button{
+    margin-top:20px;
+    padding:10px 20px;
+    border:none;
+    background:#ff4d6d;
+    color:white;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+/* Contenido */
 .container{
     padding:40px 20px;
 }
@@ -38,19 +75,13 @@ h1{
     to{text-shadow:0 0 25px #ffccd5;}
 }
 
-p{
-    font-size:20px;
-    max-width:700px;
-    margin:15px auto;
-    line-height:1.6;
-}
-
 .time-counter{
     font-size:24px;
-    margin-top:15px;
+    margin:20px 0;
     font-weight:bold;
 }
 
+/* Botón música */
 button{
     padding:12px 25px;
     margin:15px;
@@ -60,34 +91,27 @@ button{
     cursor:pointer;
     border-radius:30px;
     font-size:18px;
-    transition:0.3s;
 }
 
-button:hover{
-    transform:scale(1.1);
-    background:#ffe5ec;
-}
-
-/* Galería */
-.gallery{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:20px;
-    margin-top:40px;
-}
-
-.gallery img{
-    width:250px;
-    height:300px;
-    object-fit:cover;
+/* Carrusel */
+.carousel{
+    width:300px;
+    height:350px;
+    margin:40px auto;
+    overflow:hidden;
     border-radius:20px;
-    transition:0.4s;
     box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
-.gallery img:hover{
-    transform:scale(1.1);
+.carousel img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:none;
+}
+
+.carousel img.active{
+    display:block;
 }
 
 /* Corazones */
@@ -99,14 +123,8 @@ button:hover{
 }
 
 @keyframes float{
-    0%{
-        transform:translateY(100vh);
-        opacity:1;
-    }
-    100%{
-        transform:translateY(-10vh);
-        opacity:0;
-    }
+    0%{transform:translateY(100vh);opacity:1;}
+    100%{transform:translateY(-10vh);opacity:0;}
 }
 
 </style>
@@ -114,19 +132,26 @@ button:hover{
 
 <body>
 
+<!-- Carta -->
+<div class="overlay" id="overlay">
+    <div class="carta">
+        <h2>Para ti, Valeria 💌</h2>
+        <p>
+            Desde el 26 de septiembre de 2022 cambiaste mi vida.  
+            Gracias por estos años llenos de amor.  
+            Siempre tú, mi amor ❤️
+        </p>
+        <button onclick="cerrarCarta()">Abrir sorpresa 💖</button>
+    </div>
+</div>
+
 <div class="container">
     <h1>Valeria ❤️</h1>
-
-    <p>
-        Eres el amor de mi vida.  
-        La persona que ilumina mis días y hace que mi corazón lata más fuerte.
-    </p>
 
     <div class="time-counter" id="timeTogether"></div>
 
     <p>
-        Han sido los mejores 3 años y 4 meses de mi vida.  
-        Gracias por cada risa, cada abrazo y cada momento inolvidable.  
+        Eres el amor de mi vida, mi lugar seguro y mi felicidad diaria.
         Te amo más de lo que las palabras pueden explicar.
     </p>
 
@@ -134,18 +159,13 @@ button:hover{
         <i id="audio-icon" class="fa-solid fa-volume-high"></i> Música
     </button>
 
-    <button id="toggle-fullscreen">
-        <i class="fa-solid fa-expand"></i> Pantalla completa
-    </button>
-
-    <!-- Galería -->
     <h2>Nuestros Recuerdos 📸</h2>
 
-    <div class="gallery">
-        <img src="foto1.jpg" alt="Recuerdo 1">
-        <img src="foto2.jpg" alt="Recuerdo 2">
-        <img src="foto3.jpg" alt="Recuerdo 3">
-        <img src="foto4.jpg" alt="Recuerdo 4">
+    <div class="carousel">
+        <img src="foto1.jpg" class="active">
+        <img src="foto2.jpg">
+        <img src="foto3.jpg">
+        <img src="foto4.jpg">
     </div>
 
 </div>
@@ -153,38 +173,57 @@ button:hover{
 <audio id="music" src="tu-cancion.mp3"></audio>
 
 <script>
+
+// Carta
+function cerrarCarta(){
+    document.getElementById("overlay").style.display="none";
+}
+
+// Calcular tiempo juntos
+const startDate = new Date(2022, 8, 26); // septiembre es 8 porque empieza en 0
+const now = new Date();
+
+let years = now.getFullYear() - startDate.getFullYear();
+let months = now.getMonth() - startDate.getMonth();
+let days = now.getDate() - startDate.getDate();
+
+if(days < 0){
+    months--;
+}
+if(months < 0){
+    years--;
+    months += 12;
+}
+
+document.getElementById("timeTogether").innerText =
+`💖 Llevamos ${years} años, ${months} meses juntos 💖`;
+
+// Música
 const audio = document.getElementById("music");
 const btnAudio = document.getElementById("toggle-audio");
 const icon = document.getElementById("audio-icon");
-const btnFullscreen = document.getElementById("toggle-fullscreen");
 
 btnAudio.addEventListener("click", () => {
     if(audio.paused){
         audio.play();
-        icon.classList.remove("fa-volume-high");
-        icon.classList.add("fa-volume-xmark");
+        icon.classList.replace("fa-volume-high","fa-volume-xmark");
     } else {
         audio.pause();
-        icon.classList.remove("fa-volume-xmark");
-        icon.classList.add("fa-volume-high");
+        icon.classList.replace("fa-volume-xmark","fa-volume-high");
     }
 });
 
-btnFullscreen.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-    } else {
-        document.exitFullscreen();
-    }
-});
+// Carrusel automático
+let slides = document.querySelectorAll(".carousel img");
+let index = 0;
 
-// Mostrar tiempo juntos automáticamente
-const years = 3;
-const months = 4;
-document.getElementById("timeTogether").innerText =
-    "💖 Llevamos juntos " + years + " años y " + months + " meses 💖";
+setInterval(() => {
+    slides[index].classList.remove("active");
+    index = (index + 1) % slides.length;
+    slides[index].classList.add("active");
+}, 3000);
 
-// corazones flotando
+// Corazones
 function crearCorazon(){
     const heart = document.createElement("div");
     heart.classList.add("heart");
@@ -193,10 +232,7 @@ function crearCorazon(){
     heart.style.fontSize = (Math.random() * 20 + 10) + "px";
     heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
     document.body.appendChild(heart);
-
-    setTimeout(() => {
-        heart.remove();
-    }, 5000);
+    setTimeout(()=>heart.remove(),5000);
 }
 
 setInterval(crearCorazon, 300);
